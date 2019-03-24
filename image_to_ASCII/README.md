@@ -1,4 +1,4 @@
-# Wallpaper generator
+# Image to ASCII
 
 ![alt text](https://github.com/proman3419/Scripts/blob/master/image_to_ASCII/screenshot.png)
 
