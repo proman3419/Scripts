@@ -1,10 +1,10 @@
 from PIL import Image, ImageDraw
 from os import listdir
 from os.path import isfile, isdir, join, splitext, exists, basename
-
 import tkinter
 import sys
- 
+
+
 class WallpaperGenerator:
   def __init__(self):
     self.check_if_arg_passed()
@@ -33,7 +33,9 @@ class WallpaperGenerator:
 
         i = 1
         for f in files:
-          print('[{}/{}] Current file: {}'.format(i, len(files), join(self.path, f)))
+          print('[{}/{}] Current file: {}'.format(i,
+                                                  len(files),
+                                                  join(self.path, f)))
           self.file_path = join(self.path, f)
           self.generate_wallpaper()
           i += 1
@@ -66,7 +68,8 @@ class WallpaperGenerator:
   def get_colors(self):
     im_w = self.img.width
     im_h = self.img.height
-    self.colors = sorted(self.img.getcolors(im_w*im_h), key=lambda x: x[0])[-2:]
+    self.colors = sorted(self.img.getcolors(
+        im_w * im_h), key=lambda x: x[0])[-2:]
 
   def gradient(self):
     w = self.width
@@ -77,14 +80,14 @@ class WallpaperGenerator:
     draw = ImageDraw.Draw(self.img_g)
 
     r, g, b = c[0][1]
-    _r, _g, _b = (x/h * c[0][0]/c[1][0] for x in c[1][1])
+    _r, _g, _b = (x / h * c[0][0] / c[1][0] for x in c[1][1])
     for i in range(h):
       r, g, b = r + _r, g + _g, b + _b
-      draw.line((0, i, w, i), fill=(int(r),int(g),int(b)))
+      draw.line((0, i, w, i), fill=(int(r), int(g), int(b)))
 
   def compose_imgs(self):
-    offset = ((self.img_g.width - self.img.width)//2, 
-              (self.img_g.height - self.img.height)//2)
+    offset = ((self.img_g.width - self.img.width) // 2,
+              (self.img_g.height - self.img.height) // 2)
     self.img_g.paste(self.img, offset)
 
   def save_img(self):
