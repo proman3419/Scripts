@@ -50,7 +50,6 @@ def display_results(word, definitions):
 
 
 def main():
-  language = 'en'
   try:
     word_id = sys.argv[1].lower()
   except IndexError:
