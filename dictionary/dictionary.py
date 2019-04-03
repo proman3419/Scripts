@@ -36,8 +36,11 @@ def request(data_type):
   url = 'https://od-api.oxforddictionaries.com:443/api/v1/' + data_type
   r = requests.get(url, headers={'app_id': c.app_id, 'app_key': c.app_key})
 
-  if(int(r.status_code) != 200):
-    print('Downloading data from API failed, exiting')
+  if int(r.status_code) != 200:
+    if c.app_id == '' or c.app_key == '':
+      print('Missing values in the config file, exiting')
+    else:
+      print('Downloading data from API failed, exiting')
     exit()
 
   return r.json()
