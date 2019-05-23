@@ -1,8 +1,8 @@
 # Wallpaper generator
 
-![alt text](https://github.com/proman3419/Scripts/blob/master/wallpaper_generator/screenshot_1.png)
+![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/wallpaper_generator/screenshot_1.png)
 
-![alt text](https://github.com/proman3419/Scripts/blob/master/wallpaper_generator/screenshot_2.png)
+![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/wallpaper_generator/screenshot_2.png)
 
 ## Requirements
 * Python 3.x

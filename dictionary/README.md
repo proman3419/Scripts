@@ -1,6 +1,6 @@
 # Dictionary
 
-![alt text](https://github.com/proman3419/Scripts/blob/master/dictionary/screenshot.png)
+![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/dictionary/screenshot.png)
 
 ## Requirements
 * Python 3.x

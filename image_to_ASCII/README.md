@@ -1,6 +1,6 @@
 # Image to ASCII
 
-![alt text](https://github.com/proman3419/Scripts/blob/master/image_to_ASCII/screenshot.png)
+![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/image_to_ASCII/screenshot.png)
 
 ## Requirements
 * Python 3.x

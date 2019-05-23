@@ -1,6 +1,6 @@
 # Matrix rain
 
-![alt text](https://github.com/proman3419/Scripts/blob/master/matrix_rain/screenshot.gif)
+![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/matrix_rain/screenshot.gif)
 
 ## Requirements
 * Python 3.x
