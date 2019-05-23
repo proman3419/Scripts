@@ -7,7 +7,8 @@
 * keyboard 0.13.3
 
 ## Usage
-** If you're running the script on Linux systems you'll have to grant it root privileges (they're required for the keyboard module). It's used for exitting the script. **
+**If you're running the script on Linux systems you'll have to grant it root privileges (they're required for the keyboard module). It's used for exitting the script.**
+
 The script can be run like so:
 
 ```python3 matrix_rain.py```
