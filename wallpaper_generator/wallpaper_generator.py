@@ -7,16 +7,25 @@ import sys
 
 class WallpaperGenerator:
   def __init__(self):
-    self.check_if_arg_passed()
-    self.get_screen_res()
+    if not self.check_if_args_passed():
+      self.get_screen_res()
     self.dir_or_file()
 
-  def check_if_arg_passed(self):
+  def check_if_args_passed(self):
     try:
       self.path = sys.argv[1]
     except IndexError:
       print('File\'s/directory\'s path has not been specified')
       exit()
+    try:
+      self.width = int(sys.argv[2])
+      self.height = int(sys.argv[3])
+
+      if self.width <= 0 or self.height <= 0:
+        return False
+      return True
+    except (IndexError, ValueError):
+      return False
 
   def get_screen_res(self):
     root = tkinter.Tk()
