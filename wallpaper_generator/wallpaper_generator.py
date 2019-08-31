@@ -29,18 +29,22 @@ class WallpaperGenerator:
         description='A script that generates wallpapers from images')
 
     self.arg_parser.add_argument(
-        'source_path', type=self.path_exists, help='Path of a directory with images to process')
+        'source_path', type=self.path_exists, help='path of a directory with images to process')
     self.arg_parser.add_argument('--dest_path', type=self.path_exists, nargs='?', const=1, default='.',
-                                 help='Path of a directory where a result of the script should be saved')
+                                 help='path of a directory where a result of the script should be saved, defaultly it\'s a current working directory')
     root = tkinter.Tk()
     self.arg_parser.add_argument(
-        '--o_w', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenwidth(), help='Width of an output wallpaper')
+        '--o_w', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenwidth(), help='width of an output wallpaper')
     self.arg_parser.add_argument(
-        '--o_h', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenheight(), help='Height of an output wallpaper')
-    #self.arg_parser.add_argument(
-    #    '--i_max_w', type=self.valid_dimension, nargs='?', const=1, default=0, help='Max width of an input image')
-    #self.arg_parser.add_argument(
-    #    '--i_max_h', type=self.valid_dimension, nargs='?', const=1, default=0, help='Max height of an input image')
+        '--o_h', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenheight(), help='height of an output wallpaper')
+    self.arg_parser.add_argument(
+        '--i_min_w', type=self.valid_dimension, nargs='?', const=1, default=0, help='min width of an input image')
+    self.arg_parser.add_argument(
+        '--i_min_h', type=self.valid_dimension, nargs='?', const=1, default=0, help='min height of an input image')
+    self.arg_parser.add_argument(
+        '--i_max_w', type=self.valid_dimension, nargs='?', const=1, default=2147483647, help='max width of an input image')
+    self.arg_parser.add_argument(
+        '--i_max_h', type=self.valid_dimension, nargs='?', const=1, default=2147483647, help='max height of an input image')
 
     self.args = self.arg_parser.parse_args()
 
@@ -57,35 +61,41 @@ class WallpaperGenerator:
     imgs = [f for f in listdir(self.args.source_path) if isfile(join(self.args.source_path, f))
             and self.check_if_img(f)]
 
-    if imgs:
+    if not imgs:
       print('No images have been found in the source path')
 
     imgs_len = len(imgs)
-    for i, im in enumerate(imgs):
+    for i, img in enumerate(imgs):
       print('[{}/{}] Current image: {}'.format(i + 1,
                                                imgs_len,
-                                               join(self.args.source_path, im)))
-      self.generate_wallpaper(join(self.args.source_path, im))
+                                               join(self.args.source_path, img)))
+      self.generate_wallpaper(join(self.args.source_path, img))
 
   def check_if_img(self, path):
     return splitext(path)[1] in ['.jpg', '.png', '.bmp', '.gif']
 
   def generate_wallpaper(self, img_path):
     img = Image.open(img_path).convert('RGB')
-    #if self.check_img_dimensions(img):
-    colors = self.get_colors(img)
-    img_g = self.gradient(colors)
-    wallpaper = self.compose_imgs(img, img_g)
-    self.save_wallpaper(img_path, wallpaper)
+    if self.check_img_dimensions(img):
+      colors = self.get_colors(img)
+      img_g = self.gradient(colors)
+      wallpaper = self.compose_imgs(img, img_g)
+      self.save_wallpaper(img_path, wallpaper)
 
   def check_img_dimensions(self, img):
-    return img.width <= self.args.i_max_w and img.height <= self.args.i_max_h
+    if img.width < self.args.i_min_w or img.height < self.args.i_min_h:
+      print('The image is too small, aborting')
+      return False
+    if img.width > self.args.i_max_w or img.height > self.args.i_max_h:
+      print('The image is too big, aborting')
+      return False
+    return True
 
   def get_colors(self, img):
-    im_w = img.width
-    im_h = img.height
+    img_w = img.width
+    img_h = img.height
     return sorted(img.getcolors(
-        im_w * im_h), key=lambda x: x[0])[-2:]
+        img_w * img_h), key=lambda x: x[0])[-2:]
 
   def gradient(self, colors):
     w = self.args.o_w
