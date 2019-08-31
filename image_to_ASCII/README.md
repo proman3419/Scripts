@@ -7,8 +7,19 @@
 * Pillow 5.4.1
 
 ## Usage
-The first parameter specifies the path of a file that will be converted. The second parameter specifies width in characters of the output file. If it's not passed its value will be equal to 100.
+```
+usage: image_to_ASCII.py [-h] [--dest_path {.}] [--scale <1 - 500> {100}]
+                         src_path
 
-```python3 image_to_ASCII.py path_to_file scale```
+This script changes images to text files.
+Next to arguments names there is info about: <range> {default value}.
 
-The result of the script will be saved in the current working directory.
+positional arguments:
+  src_path              Path of a directory with images or a single image to process
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --dest_path {.}       Path of a directory where a result of the script will be saved
+  --scale <1 - 500> {100}
+                        Scale of the outputed text image
+```

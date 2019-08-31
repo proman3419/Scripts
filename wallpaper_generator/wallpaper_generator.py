@@ -25,12 +25,13 @@ class WallpaperGenerator:
 
   def init_args(self):
     arg_parser = argparse.ArgumentParser(
-        description='A script that generates wallpapers from images')
+        description='''This script generates wallpapers from images.
+Next to arguments names there is info about: <range> {default value}.''', formatter_class=argparse.RawTextHelpFormatter)
 
     arg_parser.add_argument(
         'src_path', type=self.valid_path, help='Path of a directory with images or a single image to process')
-    arg_parser.add_argument('--dest_path', type=self.valid_path, default='.', metavar='', 
-                                 help='Path of a directory where a result of the script will be saved, defaultly it\'s a current working directory')
+    arg_parser.add_argument('--dest_path', type=self.valid_path, default='.', metavar='{.}', 
+                                 help='Path of a directory where a result of the script will be saved')
     arg_parser.add_argument(
         '--i_min_w', type=self.valid_dimension, default=0, metavar='', help='Min width of an input image')
     arg_parser.add_argument(
@@ -41,9 +42,9 @@ class WallpaperGenerator:
         '--i_max_h', type=self.valid_dimension, default=2147483647, metavar='', help='Max height of an input image')
     root = tkinter.Tk()
     arg_parser.add_argument(
-        '--o_w', type=self.valid_dimension, default=root.winfo_screenwidth(), metavar='', help='Width of an output wallpaper')
+        '--o_w', type=self.valid_dimension, default=root.winfo_screenwidth(), metavar='{device\'s screen width}', help='Width of an output wallpaper')
     arg_parser.add_argument(
-        '--o_h', type=self.valid_dimension, default=root.winfo_screenheight(), metavar='', help='Height of an output wallpaper')
+        '--o_h', type=self.valid_dimension, default=root.winfo_screenheight(), metavar='{device\'s screen height}', help='Height of an output wallpaper')
     
     self.args = arg_parser.parse_args()
 

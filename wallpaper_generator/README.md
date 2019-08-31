@@ -12,23 +12,27 @@ The script picks two most used colors in an image and creates a gradient out of 
 
 ## Usage
 ```
-usage: wallpaper_generator.py [-h] [--dest_path] [--i_min_w] [--i_min_h]
-                              [--i_max_w] [--i_max_h] [--o_w] [--o_h]
-                              source_path
+usage: wallpaper_generator.py [-h] [--dest_path {.}] [--i_min_w] [--i_min_h]
+                              [--i_max_w] [--i_max_h]
+                              [--o_w {device's screen width}]
+                              [--o_h {device's screen height}]
+                              src_path
 
-A script that generates wallpapers from images
+This script generates wallpapers from images.
+Next to arguments names there is info about: <range> {default value}.
 
 positional arguments:
-  source_path   Path of a directory with images or a single image to process
+  src_path              Path of a directory with images or a single image to process
 
 optional arguments:
-  -h, --help    show this help message and exit
-  --dest_path   Path of a directory where a result of the script will be
-                saved, defaultly it's a current working directory
-  --i_min_w     Min width of an input image
-  --i_min_h     Min height of an input image
-  --i_max_w     Max width of an input image
-  --i_max_h     Max height of an input image
-  --o_w         Width of an output wallpaper
-  --o_h         Height of an output wallpaper
+  -h, --help            show this help message and exit
+  --dest_path {.}       Path of a directory where a result of the script will be saved
+  --i_min_w             Min width of an input image
+  --i_min_h             Min height of an input image
+  --i_max_w             Max width of an input image
+  --i_max_h             Max height of an input image
+  --o_w {device's screen width}
+                        Width of an output wallpaper
+  --o_h {device's screen height}
+                        Height of an output wallpaper
 ```
