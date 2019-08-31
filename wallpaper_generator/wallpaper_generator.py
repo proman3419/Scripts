@@ -29,22 +29,22 @@ class WallpaperGenerator:
         description='A script that generates wallpapers from images')
 
     self.arg_parser.add_argument(
-        'source_path', type=self.path_exists, help='path of a directory with images or a single image to process')
-    self.arg_parser.add_argument('--dest_path', type=self.path_exists, nargs='?', const=1, default='.',
-                                 help='path of a directory where a result of the script will be saved, defaultly it\'s a current working directory')
+        'source_path', type=self.path_exists, help='Path of a directory with images or a single image to process')
+    self.arg_parser.add_argument('--dest_path', type=self.path_exists, default='.', metavar='', 
+                                 help='Path of a directory where a result of the script will be saved, defaultly it\'s a current working directory')
     self.arg_parser.add_argument(
-        '--i_min_w', type=self.valid_dimension, nargs='?', const=1, default=0, help='min width of an input image')
+        '--i_min_w', type=self.valid_dimension, default=0, metavar='', help='Min width of an input image')
     self.arg_parser.add_argument(
-        '--i_min_h', type=self.valid_dimension, nargs='?', const=1, default=0, help='min height of an input image')
+        '--i_min_h', type=self.valid_dimension, default=0, metavar='', help='Min height of an input image')
     self.arg_parser.add_argument(
-        '--i_max_w', type=self.valid_dimension, nargs='?', const=1, default=2147483647, help='max width of an input image')
+        '--i_max_w', type=self.valid_dimension, default=2147483647, metavar='', help='Max width of an input image')
     self.arg_parser.add_argument(
-        '--i_max_h', type=self.valid_dimension, nargs='?', const=1, default=2147483647, help='max height of an input image')
+        '--i_max_h', type=self.valid_dimension, default=2147483647, metavar='', help='Max height of an input image')
     root = tkinter.Tk()
     self.arg_parser.add_argument(
-        '--o_w', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenwidth(), help='width of an output wallpaper')
+        '--o_w', type=self.valid_dimension, default=root.winfo_screenwidth(), metavar='', help='Width of an output wallpaper')
     self.arg_parser.add_argument(
-        '--o_h', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenheight(), help='height of an output wallpaper')
+        '--o_h', type=self.valid_dimension, default=root.winfo_screenheight(), metavar='', help='Height of an output wallpaper')
     
     self.args = self.arg_parser.parse_args()
 
@@ -84,10 +84,10 @@ class WallpaperGenerator:
 
   def check_img_dimensions(self, img):
     if img.width < self.args.i_min_w or img.height < self.args.i_min_h:
-      print('The image is too small, aborting')
+      print('The image is too small')
       return False
     if img.width > self.args.i_max_w or img.height > self.args.i_max_h:
-      print('The image is too big, aborting')
+      print('The image is too big')
       return False
     return True
 
