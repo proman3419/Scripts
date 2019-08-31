@@ -44,7 +44,7 @@ class MatrixRain:
     self.columns = []
     self.color = '\033[1;32;40m'
     self.args = []
-    self.init_arg_parser()
+    self.init_args()
     self.setup()
 
   def valid_speed(self, speed):
@@ -66,26 +66,26 @@ class MatrixRain:
       print('{} was greater than {}. A min value should be smaller than max value'.format(_min_name, _max_name))
       exit()
 
-  def init_arg_parser(self):
-    self.arg_parser = argparse.ArgumentParser(
+  def init_args(self):
+    arg_parser = argparse.ArgumentParser(
         description='''In order to exit the script press BACKSPACE.
 The script should be run as root in order to capture a BACKSPACE press.
 Next to arguments names there is info about: <range> {default value}.
 
 Will you pick the red pill or the blue pill?''', formatter_class=argparse.RawTextHelpFormatter)
 
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--speed', type=self.valid_speed, default=25, metavar='<1 - 100> {25}', help='Speed of falling characters')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--min_cd', type=self.valid_percent, default=0.1, metavar='<0.01 - 1.0> {0.1}', help='Min consecutive characters (part of screen height)')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--max_cd', type=self.valid_percent, default=0.2, metavar='<0.01 - 1.0> {0.2}', help='Max consecutive characters (part of screen height)')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--min_sd', type=self.valid_percent, default=0.3, metavar='<0.01 - 1.0> {0.3}', help='Min consecutive spaces (part of screen height)')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--max_sd', type=self.valid_percent, default=0.4, metavar='<0.01 - 1.0> {0.4}', help='Max consecutive spaces (part of screen height)')
     
-    self.args = self.arg_parser.parse_args()
+    self.args = arg_parser.parse_args()
     self.valid_min_max(self.args.min_cd, self.args.max_cd, 'min_cd', 'max_cd')
     self.valid_min_max(self.args.min_sd, self.args.max_sd, 'min_sd', 'max_sd')
 

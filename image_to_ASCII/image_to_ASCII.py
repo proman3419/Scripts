@@ -1,66 +1,68 @@
 from PIL import Image
 from os.path import isfile, join, splitext, exists, basename
-import sys
+import argparse
 
 
 class Converter:
   def __init__(self):
-    self.check_if_arg_passed()
-    if self.check_if_valid_scale():
-      if self.check_if_img():
-        self.open_img()
-        self.to_ASCII()
-        self.save_to_file()
+    self.args = []
+    self.img = None
+    self.r = []
+    self.init_args()
+    if self.check_if_img():
+      self.open_img()
+      self.to_ASCII()
+      self.save_to_file()
 
-  def check_if_arg_passed(self):
-    try:
-      self.path = sys.argv[1]
-      try:
-        self.scale = int(sys.argv[2])
-      except IndexError:
-        self.scale = 100  
-    except IndexError:
-      print('File\'s path has not been specified')
-      exit()
+  def valid_path(self, path):
+    if not exists(path):
+      raise argparse.ArgumentTypeError('%s is not a valid path' % path)
+    return path
 
-  def check_if_valid_scale(self):
-    if self.scale >= 500:
-      print('The scale should be smaller than 500')
-    elif self.scale <= 0:
-      print('The scale should be a positive integer')
-    else:
-      return True
+  def valid_scale(self, scale):
+    s = int(scale)
+    if s <= 0:
+      raise argparse.ArgumentTypeError('The scale is too small')
+    if s > 500:
+      raise argparse.ArgumentTypeError('The scale is too big')
+    return s
+
+  def init_args(self):
+    arg_parser = argparse.ArgumentParser(
+        description='''asdf''', formatter_class=argparse.RawTextHelpFormatter)
+
+    arg_parser.add_argument(
+        'src_path', type=self.valid_path, help='Path of a directory with images or a single image to process')
+    arg_parser.add_argument('--dest_path', type=self.valid_path, default='.', metavar='', 
+                                 help='Path of a directory where a result of the script will be saved, defaultly it\'s a current working directory')
+    arg_parser.add_argument('--scale', type=self.valid_scale, default=100, metavar='', 
+                                 help='Scale of the outputed text image')
+
+    self.args = arg_parser.parse_args()
 
   def check_if_img(self):
-    if exists(self.path):
-      if isfile(self.path):
-        if splitext(self.path)[1] in ['.jpeg', '.jpg', '.png', '.bmp', '.gif']:
-          print('File is an image')
-          return True
-        else:
-          print('File isn\'t an image')
-      else:
-        print('The passed path doesn\'t point a file')
-    else:
-      print('The passed path doesn\'t exist')
+    if isfile(self.args.src_path):
+      if splitext(self.args.src_path)[1] in ['.jpeg', '.jpg', '.png', '.bmp', '.gif']:
+        return True
+    print('The passed source path doesn\'t contain an image')
+    return False
 
   def open_img(self):
-    self.img = Image.open(self.path)
+    self.img = Image.open(self.args.src_path)
     self.img = self.img.convert('L')
     wh_font_ratio = 0.526
     self.img = self.img.resize(
-        (self.scale, 
-         int(self.img.height * self.scale * wh_font_ratio / self.img.width)))
+        (self.args.scale, 
+         int(self.img.height * self.args.scale * wh_font_ratio / self.img.width)))
 
   def to_ASCII(self):
     chars = r'$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~i!lI;:,\"^`". '
-    self.r = []
 
     for px in list(self.img.getdata()):
       self.r.append(chars[int(px / 255 * (len(chars) - 1))])
 
   def save_to_file(self):
-    name = basename(self.path)
+    name = basename(self.args.src_path)
     name = splitext(name)
     name = '{}_ASCII.txt'.format(name[0])
     with open(name, 'w') as f:

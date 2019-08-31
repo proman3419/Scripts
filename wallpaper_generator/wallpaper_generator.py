@@ -7,12 +7,11 @@ import argparse
 
 class WallpaperGenerator:
   def __init__(self):
-    self.arg_parser = None
     self.args = None
-    self.init_arg_parser()
+    self.init_args()
     self.dir_or_file()
 
-  def path_exists(self, path):
+  def valid_path(self, path):
     if not exists(path):
       raise argparse.ArgumentTypeError('%s is not a valid path' % path)
     return path
@@ -24,41 +23,41 @@ class WallpaperGenerator:
           '%s is not a valid dimension' % d)
     return d
 
-  def init_arg_parser(self):
-    self.arg_parser = argparse.ArgumentParser(
+  def init_args(self):
+    arg_parser = argparse.ArgumentParser(
         description='A script that generates wallpapers from images')
 
-    self.arg_parser.add_argument(
-        'source_path', type=self.path_exists, help='Path of a directory with images or a single image to process')
-    self.arg_parser.add_argument('--dest_path', type=self.path_exists, default='.', metavar='', 
+    arg_parser.add_argument(
+        'src_path', type=self.valid_path, help='Path of a directory with images or a single image to process')
+    arg_parser.add_argument('--dest_path', type=self.valid_path, default='.', metavar='', 
                                  help='Path of a directory where a result of the script will be saved, defaultly it\'s a current working directory')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--i_min_w', type=self.valid_dimension, default=0, metavar='', help='Min width of an input image')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--i_min_h', type=self.valid_dimension, default=0, metavar='', help='Min height of an input image')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--i_max_w', type=self.valid_dimension, default=2147483647, metavar='', help='Max width of an input image')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--i_max_h', type=self.valid_dimension, default=2147483647, metavar='', help='Max height of an input image')
     root = tkinter.Tk()
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--o_w', type=self.valid_dimension, default=root.winfo_screenwidth(), metavar='', help='Width of an output wallpaper')
-    self.arg_parser.add_argument(
+    arg_parser.add_argument(
         '--o_h', type=self.valid_dimension, default=root.winfo_screenheight(), metavar='', help='Height of an output wallpaper')
     
-    self.args = self.arg_parser.parse_args()
+    self.args = arg_parser.parse_args()
 
   def dir_or_file(self):
-    if isdir(self.args.source_path):
+    if isdir(self.args.src_path):
       self.iterate_over_files()
     else:
-      if self.check_if_img(self.args.source_path):
-        self.generate_wallpaper(self.args.source_path)
+      if self.check_if_img(self.args.src_path):
+        self.generate_wallpaper(self.args.src_path)
       else:
         print('The source path doesn\'t contain an image')
 
   def iterate_over_files(self):
-    imgs = [f for f in listdir(self.args.source_path) if isfile(join(self.args.source_path, f))
+    imgs = [f for f in listdir(self.args.src_path) if isfile(join(self.args.src_path, f))
             and self.check_if_img(f)]
 
     if not imgs:
@@ -68,8 +67,8 @@ class WallpaperGenerator:
     for i, img in enumerate(imgs):
       print('[{}/{}] Current image: {}'.format(i + 1,
                                                imgs_len,
-                                               join(self.args.source_path, img)))
-      self.generate_wallpaper(join(self.args.source_path, img))
+                                               join(self.args.src_path, img)))
+      self.generate_wallpaper(join(self.args.src_path, img))
 
   def check_if_img(self, path):
     return splitext(path)[1] in ['.jpg', '.png', '.bmp', '.gif']
