@@ -3,7 +3,7 @@ import random
 import time
 import keyboard
 import os
-from sys import argv
+import argparse
 
 
 class Column:
@@ -40,20 +40,54 @@ class Column:
 
 class MatrixRain:
   def __init__(self):
-    self.width = self.height = 0 
+    self.width = self.height = 0
     self.columns = []
     self.color = '\033[1;32;40m'
-    self.speed = self.arg_parser(1, 100, 1, default_v=30)
-    self.min_cd = self.arg_parser(0.05, 1, 2, default_v=0.1) # cd = characters density
-    self.max_cd = self.arg_parser(0.05, 1, 3, default_v=0.2)
-    self.min_sd = self.arg_parser(0.05, 1, 4, default_v=0.3) # sd = spaces density
-    self.max_sd = self.arg_parser(0.05, 1, 5, default_v=0.4)
-
-    # Replace min and max values if they were passed in a wrong order
-    self.min_cd, self.max_cd = self.replace_min_max(self.min_cd, self.max_cd)
-    self.min_sd, self.max_sd = self.replace_min_max(self.min_sd, self.max_sd)
-
+    self.args = []
+    self.init_arg_parser()
     self.setup()
+
+  def valid_speed(self, speed):
+    v = float(speed)
+    if v < 1 or 100 < v:
+      raise argparse.ArgumentTypeError('%s is not a valid speed value' % speed)
+      return None
+    return v
+
+  def valid_percent(self, percent):
+    p = float(percent)
+    if p < 0.01 or 1 < p:
+      raise argparse.ArgumentTypeError('%s is not in a valid values range' % percent)
+      return None
+    return p
+
+  def valid_min_max(self, _min, _max, _min_name, _max_name):
+    if _min > _max:
+      print('{} was greater than {}. A min value should be smaller than max value'.format(_min_name, _max_name))
+      exit()
+
+  def init_arg_parser(self):
+    self.arg_parser = argparse.ArgumentParser(
+        description='''In order to exit the script press BACKSPACE.
+The script should be run as root in order to capture a BACKSPACE press.
+In brackets next to arguments names there is info about: <range> {default value}.
+
+Will you pick the red pill or the blue pill?''', formatter_class=argparse.RawTextHelpFormatter)
+
+    self.arg_parser.add_argument(
+        '--speed', type=self.valid_speed, nargs='?', const=1, default=25, metavar='<1 - 100> {25}', help='speed of falling characters')
+    self.arg_parser.add_argument(
+        '--min_cd', type=self.valid_percent, nargs='?', const=1, default=0.1, metavar='<0.01 - 1.0> {0.1}', help='min characters density')
+    self.arg_parser.add_argument(
+        '--max_cd', type=self.valid_percent, nargs='?', const=1, default=0.2, metavar='<0.01 - 1.0> {0.2}', help='max characters density')
+    self.arg_parser.add_argument(
+        '--min_sd', type=self.valid_percent, nargs='?', const=1, default=0.3, metavar='<0.01 - 1.0> {0.3}', help='min spaces density')
+    self.arg_parser.add_argument(
+        '--max_sd', type=self.valid_percent, nargs='?', const=1, default=0.4, metavar='<0.01 - 1.0> {0.4}', help='max spaces density')
+    
+    self.args = self.arg_parser.parse_args()
+    self.valid_min_max(self.args.min_cd, self.args.max_cd, 'min_cd', 'max_cd')
+    self.valid_min_max(self.args.min_sd, self.args.max_sd, 'min_sd', 'max_sd')
 
   def setup(self):
     self.width, self.height = shutil.get_terminal_size()
@@ -61,39 +95,28 @@ class MatrixRain:
     for col in self.columns:
       col.content = [' ' for y in range(self.height)]
 
-  def arg_parser(self, min_v, max_v, id, default_v):
-    try:
-      x = float(argv[id])
-      if min_v <= x <= max_v:
-        return x
-      else:
-        return default_v
-    except:
-      return default_v
-
-  def replace_min_max(self, min_v, max_v):
-    return (max_v, min_v) if min_v > max_v else (min_v, max_v)
-
   def draw(self):
     for col in self.columns:
-      col.update(self.width, self.height, self.min_cd, self.max_cd, self.min_sd, self.max_sd)
+      col.update(self.width, self.height, self.args.min_cd, self.args.max_cd, self.args.min_sd, self.args.max_sd)
     self.print_columns()
-    time.sleep(1 / self.speed)
+    time.sleep(1 / self.args.speed)
 
   def print_columns(self):
     to_print = ''
     for y in range(self.height):
       for x in range(self.width):
         to_print += str(self.columns[x].content[y])
-    to_print += self.color # add font's color to the output
+    to_print += self.color # add color to the output
     print(to_print)
 
   def check_if_exit(self):
-    if keyboard.is_pressed('backspace'):  # if key 'q' is pressed 
-      self.clear_screen()
+    try:
+      if keyboard.is_pressed('backspace'):
+        self.clear_screen()
+        exit()
+    except ImportError:
+      print('You need to run the script as root')
       exit()
-    else:
-      pass
 
   def clear_screen(self):
     try:
