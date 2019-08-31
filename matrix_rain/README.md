@@ -7,36 +7,29 @@
 * keyboard 0.13.3
 
 ## Usage
-**If you're running the script on Linux systems you'll have to grant it root privileges (they're required for the keyboard module). It's used for exitting the script.**
-
-The script can be run like so:
-
-```python3 matrix_rain.py```
-
-In this case the default values of parameters will be used that is:
-
 ```
-speed = 30     # speed of falling characters
-min_cd = 0.1   # min consecutive chars
-max_cd = 0.2   # max consecutive chars
-min_sd = 0.3   # min consecutive spaces
-max_sd = 0.4   # max consecutive spaces
+usage: matrix_rain.py [-h] [--speed [<1 - 100> {25}]]
+                      [--min_cd [<0.01 - 1.0> {0.1}]]
+                      [--max_cd [<0.01 - 1.0> {0.2}]]
+                      [--min_sd [<0.01 - 1.0> {0.3}]]
+                      [--max_sd [<0.01 - 1.0> {0.4}]]
+
+In order to exit the script press BACKSPACE.
+The script should be run as root in order to capture a BACKSPACE press.
+In brackets next to arguments names there is info about: <range> {default value}.
+
+Will you pick the red pill or the blue pill?
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --speed [<1 - 100> {25}]
+                        speed of falling characters
+  --min_cd [<0.01 - 1.0> {0.1}]
+                        min consecutive characters (part of screen height)
+  --max_cd [<0.01 - 1.0> {0.2}]
+                        max consecutive characters (part of screen height)
+  --min_sd [<0.01 - 1.0> {0.3}]
+                        min consecutive spaces (part of screen height)
+  --max_sd [<0.01 - 1.0> {0.4}]
+                        max consecutive spaces (part of screen height)
 ```
-
-The min and max values represent fractions of height of a terminal.
-
-In order to use different values they need to be passed when invoking the script:
-
-```python3 matrix_rain.py speed min_cd max_cd min_sd max_sd```
-
-Here are ranges in which the arguments should be contained:
-
-```
-1 <= speed <= 100
-0.05 <= min_cd <= 1
-0.05 <= max_cd <= 1
-0.05 <= min_sd <= 1
-0.05 <= max_sd <= 1
-```
-
-To exit the script press BACKSPACE.

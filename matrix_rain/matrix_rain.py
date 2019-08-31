@@ -77,13 +77,13 @@ Will you pick the red pill or the blue pill?''', formatter_class=argparse.RawTex
     self.arg_parser.add_argument(
         '--speed', type=self.valid_speed, nargs='?', const=1, default=25, metavar='<1 - 100> {25}', help='speed of falling characters')
     self.arg_parser.add_argument(
-        '--min_cd', type=self.valid_percent, nargs='?', const=1, default=0.1, metavar='<0.01 - 1.0> {0.1}', help='min characters density')
+        '--min_cd', type=self.valid_percent, nargs='?', const=1, default=0.1, metavar='<0.01 - 1.0> {0.1}', help='min consecutive characters (part of screen height)')
     self.arg_parser.add_argument(
-        '--max_cd', type=self.valid_percent, nargs='?', const=1, default=0.2, metavar='<0.01 - 1.0> {0.2}', help='max characters density')
+        '--max_cd', type=self.valid_percent, nargs='?', const=1, default=0.2, metavar='<0.01 - 1.0> {0.2}', help='max consecutive characters (part of screen height)')
     self.arg_parser.add_argument(
-        '--min_sd', type=self.valid_percent, nargs='?', const=1, default=0.3, metavar='<0.01 - 1.0> {0.3}', help='min spaces density')
+        '--min_sd', type=self.valid_percent, nargs='?', const=1, default=0.3, metavar='<0.01 - 1.0> {0.3}', help='min consecutive spaces (part of screen height)')
     self.arg_parser.add_argument(
-        '--max_sd', type=self.valid_percent, nargs='?', const=1, default=0.4, metavar='<0.01 - 1.0> {0.4}', help='max spaces density')
+        '--max_sd', type=self.valid_percent, nargs='?', const=1, default=0.4, metavar='<0.01 - 1.0> {0.4}', help='max consecutive spaces (part of screen height)')
     
     self.args = self.arg_parser.parse_args()
     self.valid_min_max(self.args.min_cd, self.args.max_cd, 'min_cd', 'max_cd')
