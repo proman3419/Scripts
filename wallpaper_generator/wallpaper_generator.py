@@ -2,91 +2,98 @@ from PIL import Image, ImageDraw
 from os import listdir
 from os.path import isfile, isdir, join, splitext, exists, basename
 import tkinter
-import sys
+import argparse
 
 
 class WallpaperGenerator:
   def __init__(self):
-    if not self.check_if_args_passed():
-      self.get_screen_res()
+    self.arg_parser = None
+    self.args = None
+    self.init_arg_parser()
     self.dir_or_file()
 
-  def check_if_args_passed(self):
-    try:
-      self.path = sys.argv[1]
-    except IndexError:
-      print('File\'s/directory\'s path has not been specified')
-      exit()
-    try:
-      self.width = int(sys.argv[2])
-      self.height = int(sys.argv[3])
+  def path_exists(self, path):
+    if not exists(path):
+      raise argparse.ArgumentTypeError('%s is not a valid path' % path)
+    return path
 
-      if self.width <= 0 or self.height <= 0:
-        return False
-      return True
-    except (IndexError, ValueError):
-      return False
+  def valid_dimension(self, dimension):
+    d = int(dimension)
+    if 0 >= d:
+      raise argparse.ArgumentTypeError(
+          '%s is not a valid dimension' % d)
+    return d
 
-  def get_screen_res(self):
+  def init_arg_parser(self):
+    self.arg_parser = argparse.ArgumentParser(
+        description='A script that generates wallpapers from images')
+
+    self.arg_parser.add_argument(
+        'source_path', type=self.path_exists, help='Path of a directory with images to process')
+    self.arg_parser.add_argument('--dest_path', type=self.path_exists, nargs='?', const=1, default='.',
+                                 help='Path of a directory where a result of the script should be saved')
     root = tkinter.Tk()
-    self.width = root.winfo_screenwidth()
-    self.height = root.winfo_screenheight()
+    self.arg_parser.add_argument(
+        '--o_w', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenwidth(), help='Width of an output wallpaper')
+    self.arg_parser.add_argument(
+        '--o_h', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenheight(), help='Height of an output wallpaper')
+    #self.arg_parser.add_argument(
+    #    '--i_max_w', type=self.valid_dimension, nargs='?', const=1, default=0, help='Max width of an input image')
+    #self.arg_parser.add_argument(
+    #    '--i_max_h', type=self.valid_dimension, nargs='?', const=1, default=0, help='Max height of an input image')
+
+    self.args = self.arg_parser.parse_args()
 
   def dir_or_file(self):
-    if exists(self.path):
-      if isdir(self.path):
-        files = [f for f in listdir(self.path) if isfile(join(self.path, f))]
-
-        if len(files) == 0:
-          print('No files have been found in the passed directory')
-
-        i = 1
-        for f in files:
-          print('[{}/{}] Current file: {}'.format(i,
-                                                  len(files),
-                                                  join(self.path, f)))
-          self.file_path = join(self.path, f)
-          self.generate_wallpaper()
-          i += 1
-      elif isfile(self.path):
-        self.file_path = self.path
-        self.generate_wallpaper()
+    if isdir(self.args.source_path):
+      self.iterate_over_files()
     else:
-      print('The passed path doesn\'t exist')
+      if self.check_if_img(self.args.source_path):
+        self.generate_wallpaper(self.args.source_path)
+      else:
+        print('The source path doesn\'t contain an image')
 
-  def generate_wallpaper(self):
-    if self.check_if_img():
-      self.open_img()
-      self.get_colors()
-      self.gradient()
-      self.compose_imgs()
-      self.save_img()
+  def iterate_over_files(self):
+    imgs = [f for f in listdir(self.args.source_path) if isfile(join(self.args.source_path, f))
+            and self.check_if_img(f)]
 
-  def check_if_img(self):
-    if splitext(self.file_path)[1] in ['.jpg', '.png', '.bmp', '.gif']:
-      print('File is an image')
-      return True
-    else:
-      print('File isn\'t an image')
-      return False
+    if imgs:
+      print('No images have been found in the source path')
 
-  def open_img(self):
-    self.img = Image.open(self.file_path)
-    self.img = self.img.convert('RGB')
+    imgs_len = len(imgs)
+    for i, im in enumerate(imgs):
+      print('[{}/{}] Current image: {}'.format(i + 1,
+                                               imgs_len,
+                                               join(self.args.source_path, im)))
+      self.generate_wallpaper(join(self.args.source_path, im))
 
-  def get_colors(self):
-    im_w = self.img.width
-    im_h = self.img.height
-    self.colors = sorted(self.img.getcolors(
+  def check_if_img(self, path):
+    return splitext(path)[1] in ['.jpg', '.png', '.bmp', '.gif']
+
+  def generate_wallpaper(self, img_path):
+    img = Image.open(img_path).convert('RGB')
+    #if self.check_img_dimensions(img):
+    colors = self.get_colors(img)
+    img_g = self.gradient(colors)
+    wallpaper = self.compose_imgs(img, img_g)
+    self.save_wallpaper(img_path, wallpaper)
+
+  def check_img_dimensions(self, img):
+    return img.width <= self.args.i_max_w and img.height <= self.args.i_max_h
+
+  def get_colors(self, img):
+    im_w = img.width
+    im_h = img.height
+    return sorted(img.getcolors(
         im_w * im_h), key=lambda x: x[0])[-2:]
 
-  def gradient(self):
-    w = self.width
-    h = self.height
-    c = self.colors
+  def gradient(self, colors):
+    w = self.args.o_w
+    h = self.args.o_h
+    c = colors
 
-    self.img_g = Image.new('RGB', (w, h), '#FFFFFF')
-    draw = ImageDraw.Draw(self.img_g)
+    img_g = Image.new('RGB', (w, h), '#FFFFFF')
+    draw = ImageDraw.Draw(img_g)
 
     r, g, b = c[0][1]
     _r, _g, _b = (x / h * c[0][0] / c[1][0] for x in c[1][1])
@@ -94,17 +101,19 @@ class WallpaperGenerator:
       r, g, b = r + _r, g + _g, b + _b
       draw.line((0, i, w, i), fill=(int(r), int(g), int(b)))
 
-  def compose_imgs(self):
-    offset = ((self.img_g.width - self.img.width) // 2,
-              (self.img_g.height - self.img.height) // 2)
-    self.img_g.paste(self.img, offset)
+    return img_g
 
-  def save_img(self):
-    name = basename(self.file_path)
-    name = splitext(name)
-    name = '{}_wallpaper{}'.format(name[0], name[1])
-    self.img_g.save(name)
-    print('Saved as: {}'.format(name))
+  def compose_imgs(self, img, img_g):
+    offset = ((img_g.width - img.width) // 2,
+              (img_g.height - img.height) // 2)
+    img_g.paste(img, offset)
+    return img_g
+
+  def save_wallpaper(self, img_path, wallpaper):
+    path = splitext(basename(img_path))
+    path = join(self.args.dest_path, '{}_wallpaper{}'.format(path[0], path[1]))
+    wallpaper.save(path)
+    print('Saved as: {}'.format(path))
 
 
 def main():
