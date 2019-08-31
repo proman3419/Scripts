@@ -29,14 +29,9 @@ class WallpaperGenerator:
         description='A script that generates wallpapers from images')
 
     self.arg_parser.add_argument(
-        'source_path', type=self.path_exists, help='path of a directory with images to process')
+        'source_path', type=self.path_exists, help='path of a directory with images or a single image to process')
     self.arg_parser.add_argument('--dest_path', type=self.path_exists, nargs='?', const=1, default='.',
-                                 help='path of a directory where a result of the script should be saved, defaultly it\'s a current working directory')
-    root = tkinter.Tk()
-    self.arg_parser.add_argument(
-        '--o_w', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenwidth(), help='width of an output wallpaper')
-    self.arg_parser.add_argument(
-        '--o_h', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenheight(), help='height of an output wallpaper')
+                                 help='path of a directory where a result of the script will be saved, defaultly it\'s a current working directory')
     self.arg_parser.add_argument(
         '--i_min_w', type=self.valid_dimension, nargs='?', const=1, default=0, help='min width of an input image')
     self.arg_parser.add_argument(
@@ -45,7 +40,12 @@ class WallpaperGenerator:
         '--i_max_w', type=self.valid_dimension, nargs='?', const=1, default=2147483647, help='max width of an input image')
     self.arg_parser.add_argument(
         '--i_max_h', type=self.valid_dimension, nargs='?', const=1, default=2147483647, help='max height of an input image')
-
+    root = tkinter.Tk()
+    self.arg_parser.add_argument(
+        '--o_w', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenwidth(), help='width of an output wallpaper')
+    self.arg_parser.add_argument(
+        '--o_h', type=self.valid_dimension, nargs='?', const=1, default=root.winfo_screenheight(), help='height of an output wallpaper')
+    
     self.args = self.arg_parser.parse_args()
 
   def dir_or_file(self):
