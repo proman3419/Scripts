@@ -1,6 +1,6 @@
 # Wallpaper generator
 
-The script picks two most used colors in an image and creates a gradient out of them. This activity is followed with adding the image centered on the gradient.
+The script picks two most used colors in an image and creates a gradient out of them. This activity is followed by adding the image centered on the gradient.
 
 ![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/wallpaper_generator/screenshot_1.png)
 
