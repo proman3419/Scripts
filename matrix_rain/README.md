@@ -2,10 +2,6 @@
 
 ![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/matrix_rain/screenshot.gif)
 
-## Requirements
-* Python 3.x
-* keyboard 0.13.3
-
 ## Usage
 ```
 usage: matrix_rain.py [-h] [--speed <1 - 100> {25}]

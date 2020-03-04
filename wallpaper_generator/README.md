@@ -6,10 +6,6 @@ The script picks two most used colors in an image and creates a gradient out of 
 
 ![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/wallpaper_generator/screenshot_2.png)
 
-## Requirements
-* Python 3.x
-* Pillow 5.4.1
-
 ## Usage
 ```
 usage: wallpaper_generator.py [-h] [--dest_path {.}] [--i_min_w] [--i_min_h]

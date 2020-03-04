@@ -2,10 +2,6 @@
 
 ![alt text](https://github.com/proman3419/Scripts-and-tools/blob/master/image_to_ASCII/screenshot.png)
 
-## Requirements
-* Python 3.x
-* Pillow 5.4.1
-
 ## Usage
 ```
 usage: image_to_ASCII.py [-h] [--dest_path {.}] [--scale <1 - 500> {100}]
